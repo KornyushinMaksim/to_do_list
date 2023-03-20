@@ -1,2 +1,6 @@
 ﻿  to_do list.cpp
+C:\Users\Макс\source\repos\to_do list\to_do list\to_do list.cpp(172,84): warning C4305: инициализация: усечение из "double" в "float"
+C:\Users\Макс\source\repos\to_do list\to_do list\to_do list.cpp(173,86): warning C4305: инициализация: усечение из "double" в "float"
+C:\Users\Макс\source\repos\to_do list\to_do list\to_do list.cpp(174,117): warning C4305: инициализация: усечение из "double" в "float"
+C:\Users\Макс\source\repos\to_do list\to_do list\to_do list.cpp(175,97): warning C4305: инициализация: усечение из "double" в "float"
   to_do list.vcxproj -> C:\Users\Макс\source\repos\to_do list\x64\Debug\to_do list.exe
