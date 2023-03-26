@@ -35,30 +35,23 @@ struct date {
 };
 struct to_do {
 	char name[40];
-	char priority[4];
+	int priority;
 	char description[300];
 	date performance;
 };
 
+int enter() {
+	cout << "Выберите пункт для действий: ";
+	int a;
+	cin >> a;
+	return a;
+}
 void print_name(to_do*& list, int& size) {
 	cout << "Общий список дел : \n";
 	for (int i = 0; i < size; i++) {
 		cout << i + 1 << ". " << list[i].name << endl;
 	}
 }
-//void print_delo(to_do*& list, int delo) {
-//	cout << endl
-//		<< "--------------------" << endl
-//		<< delo << ".\n"
-//		<< list[delo - 1].name << "\t"
-//		<< list[delo - 1].priority << endl << "дата "
-//		<< list[delo - 1].performance.day << "."
-//		<< list[delo - 1].performance.month << "\tвремя "
-//		<< list[delo - 1].performance.time << endl << endl
-//		<< list[delo - 1].description << endl
-//		<< "--------------------" << endl;
-//
-//}
 void show_delo(to_do*& list, int index) {
 	cout << "--------------------" << endl
 		<< index + 1 << ".\n"
@@ -80,10 +73,10 @@ void add(to_do*& list, int& size) {
 	cin.getline(new_list[size].name, 40); //bag
 	cout << "Название: ";
 	cin.getline(new_list[size].name, 40);
-	cout << "Приоритет: ";
-	cin.getline(new_list[size].priority, 4);
 	cout << "Описание: ";
 	cin.getline(new_list[size].description, 100);
+	cout << "Приоритет: ";
+	cin >> new_list[size].priority;
 	cout << "День исполнения: ";
 	cin >> new_list[size].performance.day;
 	cout << "Месяц исполнения: ";
@@ -95,6 +88,38 @@ void add(to_do*& list, int& size) {
 	delete[] list;
 	size++;
 	list = new_list;
+	system("cls");
+}
+void sorting_priority(to_do*& list, int& size) {
+	to_do temp;
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size - 1; j++) {
+			if (list[j + 1].priority < list[j].priority) {
+				temp = list[j + 1];
+				list[j + 1] = list[j];
+				list[j] = temp;
+
+			}
+		}
+		//show_delo(list, i);
+	}
+	system("cls");
+}
+void sorting_data(to_do*& list, int& size) {
+	to_do temp;
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size - 1; j++) {
+			if (list[j + 1].performance.month < list[j].performance.month ||
+				list[j + 1].performance.day < list[j].performance.day) {
+				temp = list[j + 1];
+				list[j + 1] = list[j];
+				list[j] = temp;
+
+			}
+		}
+		//show_delo(list, i);
+	}
+	system("cls");
 }
 void print(to_do*& list, int& size) {
 	system("cls");
@@ -113,12 +138,10 @@ void print(to_do*& list, int& size) {
 	}
 	bool flag = true;
 	while (flag) {
-		cout << "Отображение списка:\n1. на день\n2. на неделю\n3. на месяц\n4. Завершить\n";
-		int a;
-		cin >> a;
-		system("cls");
-		switch (a) {
+		cout << "Отображение списка:\n1. на день\n2. на неделю\n3. на месяц\n4. Сортировка по приоритету\n5. Сортировка по дате\n6. Завершить\n";
+		switch (enter()) {
 		case 1:
+			system("cls");
 			cout << "Введите интересующий вас день: ";
 			int day;
 			cin >> day;
@@ -129,9 +152,11 @@ void print(to_do*& list, int& size) {
 			}
 			break;
 		case 2:
+			system("cls");
 			cout << "Введите интересующий вас неделю: "; //доделать
 			break;
 		case 3:
+			system("cls");
 			cout << "Введите интересующий вас месяц: ";
 			int month;
 			cin >> month;
@@ -142,6 +167,12 @@ void print(to_do*& list, int& size) {
 			}
 			break;
 		case 4:
+			sorting_priority(list, size);
+			break;
+		case 5:
+			sorting_data(list, size);
+			break;
+		case 6:
 			flag = false;
 		}
 	}
@@ -183,13 +214,13 @@ void edit(to_do*& list, int& size) {
 			show_delo(list, delo - 1);
 			break;
 		case 2:
-			cin.getline(list[delo - 1].priority, 4); //bag
+			//cin.getline(list[delo - 1].priority, 4; //bag
 			cout << "Приоритет: ";
-			cin.getline(list[delo - 1].priority, 4);
+			cin >> list[delo - 1].priority;
 			show_delo(list, delo - 1);
 			break;
 		case 3:
-			cin.getline(list[delo - 1].priority, 4); //bag
+			cin.getline(list[delo - 1].description, 4); //bag
 			cout << "Описание: ";
 			cin.getline(list[delo - 1].description, 100);
 			show_delo(list, delo - 1);
@@ -232,11 +263,11 @@ void search(to_do*& list, int& size) {
 		switch (a) {
 		case 1:
 			cout << "Введите название для поиска: ";
-			char search[40];
-			cin.getline(search, 40); //bag
-			cin.getline(search, 40);
+			char search_name[40];
+			cin.getline(search_name, 40); //bag
+			cin.getline(search_name, 40);
 			for (int i = 0; i < size; i++) {
-				if (strstr(list[i].name, search)) {
+				if (strstr(list[i].name, search_name)) {
 					count++;
 					show_delo(list, i);
 					cout << endl;
@@ -246,6 +277,42 @@ void search(to_do*& list, int& size) {
 			if (count == 0) {
 				cout << "Совпадений не найдено" << endl;
 			}
+			break;
+		case 2:
+			cout << "Введите приоритет для поиска: ";
+			int search_priority;
+			//cin.getline(search_priority, 4); //bag
+			cin >> search_priority;
+			for (int i = 0; i < size; i++) {
+				if (list[i].priority == search_priority) {
+					count++;
+					show_delo(list, i);
+					cout << endl;
+				}
+
+			}
+			if (count == 0) {
+				cout << "Совпадений не найдено" << endl;
+			}
+			break;
+		case 3:
+			cout << "Введите описание для поиска: ";
+			char search_description[300];
+			cin.getline(search_description, 300); //bag
+			cin.getline(search_description, 300);
+			for (int i = 0; i < size; i++) {
+				if (strstr(list[i].description, search_description)) {
+					count++;
+					show_delo(list, i);
+					cout << endl;
+				}
+
+			}
+			if (count == 0) {
+				cout << "Совпадений не найдено" << endl;
+				break;
+			}
+			break;
 		case 4:
 			flag = false;
 		}
@@ -257,12 +324,12 @@ int main()
 	system("chcp 1251>nul");
 	int size = 4;
 	to_do* list = new to_do[size];
-	list[0] = { "Магазин","2","Квас, укроп, огурец",3,4,17,30 };
-	list[1] = { "Гараж","1","Уборка, покраска ворот",7,8,12,10 };
-	list[2] = { "Поезд","5","Чемодан, паспорт, билеты, бутерброд, вода",8,4,5,05 };
-	list[3] = { "Стоматолог","3","Паспорт, кредитка, вода",7,8,18,15 };
+	list[0] = { "Магазин",2,"Квас, укроп, огурец",3,4,17,30 };
+	list[1] = { "Гараж",1,"Уборка, покраска ворот",7,8,12,10 };
+	list[2] = { "Поезд",5,"Чемодан, паспорт, билеты, бутерброд, вода",8,4,5,05 };
+	list[3] = { "Стоматолог",3,"Паспорт, кредитка, вода",7,8,18,15 };
 	while (true) {
-		cout << "Меню: \n1. Добавить \n2. Удалить\n3. Редактировать\n4. Поиск\n5. Отображение списка дел\n6. Сортировка по приоритету\n7. Сортировка по дате\n\n";
+		cout << "Меню: \n1. Добавить \n2. Удалить\n3. Редактировать\n4. Поиск\n5. Отображение списка дел\n\n";
 		print_name(list, size);
 		int pos;
 		cin >> pos;
@@ -283,8 +350,6 @@ int main()
 			print(list, size);
 			break;
 		}
-		//system("cls");
-		//system("pause");
 	}
 
 }
