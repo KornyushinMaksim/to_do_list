@@ -21,10 +21,7 @@
 //•по дате и времени исполнения.
 
 #include <iostream>
-#include <string.h>
-#include <string>
-#include <stdio.h>
-#include <conio.h>
+#include<fstream>
 using namespace std;
 
 struct date {
@@ -47,9 +44,37 @@ int enter() {
 	return a;
 }
 void print_name(to_do*& list, int& size) {
-	cout << "Общий список дел : \n";
-	for (int i = 0; i < size; i++) {
-		cout << i + 1 << ". " << list[i].name << endl;
+	if (size == 0) {
+		cout << "Список дел пока пуст... Добавте дело \n";
+		to_do* new_list = new to_do[size + 1];
+		for (int i = 0; i < size; i++) {
+			new_list[i] = list[i];
+		}
+		//cin.getline(new_list[size].name, 40); //bag
+		cout << "Название: ";
+		cin.getline(new_list[size].name, 40);
+		cout << "Описание: ";
+		cin.getline(new_list[size].description, 100);
+		cout << "Приоритет: ";
+		cin >> new_list[size].priority;
+		cout << "День исполнения: ";
+		cin >> new_list[size].performance.day;
+		cout << "Месяц исполнения: ";
+		cin >> new_list[size].performance.month;
+		cout << "Час исполнения: ";
+		cin >> new_list[size].performance.hours;
+		cout << "Минуты исполнения: ";
+		cin >> new_list[size].performance.minets;
+		delete[] list;
+		size++;
+		list = new_list;
+		system("cls");
+	}
+	else {
+		cout << "Общий список дел : \n";
+		for (int i = 0; i < size; i++) {
+			cout << i + 1 << ". " << list[i].name << endl;
+		}
 	}
 }
 void show_delo(to_do*& list, int index) {
@@ -91,6 +116,7 @@ void add(to_do*& list, int& size) {
 	system("cls");
 }
 void sorting_priority(to_do*& list, int& size) {
+	system("cls");
 	to_do temp;
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size - 1; j++) {
@@ -98,28 +124,29 @@ void sorting_priority(to_do*& list, int& size) {
 				temp = list[j + 1];
 				list[j + 1] = list[j];
 				list[j] = temp;
-
 			}
 		}
-		//show_delo(list, i);
+		show_delo(list, i);
 	}
-	system("cls");
 }
 void sorting_data(to_do*& list, int& size) {
+	system("cls");
 	to_do temp;
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size - 1; j++) {
-			if (list[j + 1].performance.month < list[j].performance.month ||
-				list[j + 1].performance.day < list[j].performance.day) {
+			if (list[j + 1].performance.day < list[j].performance.day) {
 				temp = list[j + 1];
 				list[j + 1] = list[j];
 				list[j] = temp;
-
+			}
+			if (list[j + 1].performance.month < list[j].performance.month) {
+				temp = list[j + 1];
+				list[j + 1] = list[j];
+				list[j] = temp;
 			}
 		}
-		//show_delo(list, i);
+		show_delo(list, i);
 	}
-	system("cls");
 }
 void print(to_do*& list, int& size) {
 	system("cls");
@@ -178,6 +205,7 @@ void print(to_do*& list, int& size) {
 	}
 }
 void del(to_do*& list, int& size) {
+	system("cls");
 	print_name(list, size);
 	to_do* new_list = new to_do[size - 1];
 	cout << "Выберите номер дела для удаления: ";
@@ -192,6 +220,7 @@ void del(to_do*& list, int& size) {
 	delete[] list;
 	size--;
 	list = new_list;
+	system("cls");
 }
 void edit(to_do*& list, int& size) {
 	system("cls");
@@ -252,7 +281,7 @@ void edit(to_do*& list, int& size) {
 	}
 }
 void search(to_do*& list, int& size) {
-	system("cls");
+	
 	bool flag = true;
 	while (flag) {
 		cout << "Поиск дел по:\n1. названию\n2. приоритету\n3. описанию\n4. Завершить\n"
@@ -260,6 +289,7 @@ void search(to_do*& list, int& size) {
 		int a, 
 			count = 0;
 		cin >> a;
+		system("cls");
 		switch (a) {
 		case 1:
 			cout << "Введите название для поиска: ";
@@ -328,9 +358,12 @@ int main()
 	list[1] = { "Гараж",1,"Уборка, покраска ворот",7,8,12,10 };
 	list[2] = { "Поезд",5,"Чемодан, паспорт, билеты, бутерброд, вода",8,4,5,05 };
 	list[3] = { "Стоматолог",3,"Паспорт, кредитка, вода",7,8,18,15 };
+	//print_name(list, size);
+
 	while (true) {
-		cout << "Меню: \n1. Добавить \n2. Удалить\n3. Редактировать\n4. Поиск\n5. Отображение списка дел\n\n";
+		cout << "Меню: \n1. Добавить \n2. Удалить\n3. Редактировать\n4. Поиск\n5. Отображение списка дел\n6. Сохранить\n\n";
 		print_name(list, size);
+		cout << "\nВыбирите что хотите сделать:" << endl;
 		int pos;
 		cin >> pos;
 		switch (pos) {
@@ -349,10 +382,25 @@ int main()
 		case 5:
 			print(list, size);
 			break;
+		case 6:
+			ofstream out;
+			out.open("Save.txt");
+			if (out.is_open()) {
+				for (int i = 0; i < size; i++) {
+					out.write((char*)&(list[i]), sizeof(to_do));
+				}
+			}
+			out.close();
+			system("cls");
+			cout << "Файл сохранен" << endl << endl;
+
+			break;
 		}
 	}
 
 }
 
 // доработать ввод приоритете (диапазон и защита от "дурака")
-//доработать структуру "дата"
+//  работа с файлом
+// считываем каждый элемент структуры и оптравляем его в поток на запись в файл для 
+// правильного отображения файла
